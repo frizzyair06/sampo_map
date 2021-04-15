@@ -1,0 +1,73 @@
+<h1>sampomap</h1>
+<h3>post詳細</h3>
+<div class="post">
+  <p><%= @post.title %></p>
+  <div class="field">
+  <%= image_tag @post.image_url, size: "250x200" if @post.image? %>
+  
+  </div>
+  <p><%= @post.detail %></p>
+  <p><%= @post.created_at %></p>
+</div>
+
+    <div class = "gmap">
+      <h2>gmap</h2>
+
+        <input id="address" type="textbox" value="GeekSalon">
+        <input type="button" value="Encode" onclick="codeAddress()">
+      <div id="display">何かが表示される、、、、！</div>
+      <div id='map'>
+      </div>
+
+      <style>
+        #map {
+          height: 600px;
+          width: 600px;
+        }
+      </style>
+
+      <script>
+        let map
+        // let geocoder
+
+        const display = document.getElementById('display')
+
+
+        function initMap(){
+          geocoder = new google.maps.Geocoder()
+
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 40.7828, lng:-73.9653},
+            zoom: 12,
+          });
+
+          marker = new google.maps.Marker({
+            position:  {lat: 40.7828, lng:-73.9653},
+            map: map
+          });
+        }
+        let geocoder
+
+        function codeAddress(){
+          let inputAddress = document.getElementById('address').value;
+
+          geocoder.geocode( { 'address': inputAddress}, function(results, status) {
+            if (status == 'OK') {
+              map.setCenter(results[0].geometry.location);
+              var marker = new google.maps.Marker({
+                  map: map,
+                  position: results[0].geometry.location
+              });
+            display.textContent = "検索結果：" + results[ 0 ].geometry.location 
+            } else {
+              alert('該当する結果がありませんでした：' + status);
+            }
+          });   
+        }
+      </script>
+
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDjiwgPmWOBS1wgobOv5ILh-pdSKjYlMII&callback=initMap" async defer></script>
+    </div>
+
+<%= link_to "編集する", edit_post_path(@post.id) %>
+<%= link_to "post一覧に戻る", posts_path %>
