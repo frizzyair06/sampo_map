@@ -7,11 +7,14 @@
     <%= f.label :title %>
     <%= f.text_field :title, :size => 30 %><br>
     <%= f.label :image %>
-    <%= f.file_field :image %><br>
+    <%= f.file_field :image %>
+    <br>
     <%= f.label :詳細 %>
     <%= f.text_field :detail, :size => "150" %><br>
     <%= f.hidden_field :lat,:value =>"緯度", id: :lat %>
     <%= f.hidden_field :lng,:value =>"経度", id: :lng %>
+    <input type="button" value="住所取得" onclick="getAddress();">
+    <%= f.text_field :street_address, :id =>"addressOutput",:size => "150" %>
   <%= f.submit "spotを投稿する" %>
   </div>
 <% end %>
@@ -21,6 +24,8 @@
 
     <input id="address" type="textbox" value="GeekSalon">
     <input type="button" value="encode" onclick="codeAddress()">
+    <br>
+
     <p>マーカーをドラック＆ドロップで位置の調整ができます。<p>
     <div id='map'></div>
 
@@ -51,6 +56,7 @@
     let aft
     function codeAddress(){
       let inputAddress = document.getElementById('address').value;
+
       geocoder.geocode( { 'address': inputAddress}, function(results, status) {
         if (status == 'OK') {
             //マーカーが複数できないようにする
@@ -96,9 +102,9 @@
   function getAddress(){
 
     
-    //緯度・経度をLatLngクラスに変換します。
-    var latLngInput = new google.maps.LatLng(lat, lng);
-
+    var idoInput = document.getElementById('lat').value;
+    var keidoInput = document.getElementById('lng').value;
+    var latLngInput = new google.maps.LatLng(idoInput, keidoInput);
     //Google Maps APIのジオコーダを使います。
     var geocoder = new google.maps.Geocoder();
     
@@ -139,8 +145,6 @@
 
   }
   </script> 
-  <input type="button" value="住所取得" onclick="getAddress();">
-  <textarea id="addressOutput" rows="3" cols="26"></textarea>
 </div>
 
 <%= link_to "spot一覧に戻る", posts_path %>

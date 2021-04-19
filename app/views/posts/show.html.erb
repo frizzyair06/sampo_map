@@ -3,10 +3,12 @@
 <div class="post">
   <p><%= @post.title %></p>
   <div class="field">
-  <%= image_tag @post.image_url, size: "250x200" if @post.image? %>
+  <%= image_tag @post.image_url, size: "auto" if @post.image? %>
   
   </div>
   <p><%= @post.detail %></p>
+  <p><%= @post.street_address %></p>
+  <p><%= @post.user.email %></p>
   <p><%= @post.created_at.to_s(:datetime_jp) %></p>
 </div>
 

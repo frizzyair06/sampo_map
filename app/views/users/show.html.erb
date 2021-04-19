@@ -1,0 +1,31 @@
+<h1>users#show</h1>
+<p>名前 : <%= @user.name %></p>
+<p>メールアドレス : <%= @user.email %></p>
+
+<% if current_user.id == @user.id %>
+  <%= link_to "編集する", edit_user_registration_path %>
+<% end %>
+
+<h2>ユーザーの投稿一覧</h2>
+<% @user.posts.each do |t| %>
+  <%= t.user.name %>
+  <div class="post">
+      <div class="main-box">
+        <div class="left-container">
+          <%= t.title %>
+          <%= image_tag t.image_url, size: "250x200" if t.image? %>
+        </div>
+        <div class="right-container">
+          <%= link_to "詳細", post_path(t.id) %>
+          <%= link_to "編集", edit_post_path(t.id) %>
+          <%= link_to "削除", post_path(t.id), method: :delete %>
+        </div>
+      </div>
+      <%= t.user.email %>
+      <p class="time"><%= t.created_at.to_s(:datetime_jp) %></p>
+    </div>
+<% end %>
+
+
+
+<%= link_to "post一覧に戻る", posts_path %>

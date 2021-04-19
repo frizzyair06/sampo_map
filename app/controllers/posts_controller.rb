@@ -11,6 +11,9 @@ class PostsController < ApplicationController
 
   def create
     post = Post.new(post_params)
+    # アソシエーション
+    post.user_id = current_user.id
+    
     if post.save
       redirect_to :action => "index"
     else
@@ -43,6 +46,6 @@ class PostsController < ApplicationController
   
   private
   def post_params
-    params.require(:post).permit(:title,:detail,:image,:lat,:lng)
+    params.require(:post).permit(:title,:detail,:image,:lat,:lng,:street_address)
   end
 end

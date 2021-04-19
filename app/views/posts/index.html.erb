@@ -1,5 +1,9 @@
 <h1>sampomap</h1>
 <h3>sampo一覧</h3>
+<% if user_signed_in? %>
+<%= link_to "マイページへ", user_path(current_user.id) %>
+<% end %>
+<%= button_to 'ログアウト', destroy_user_session_path, method: :delete %>
 <%= link_to "新規投稿へ", new_post_path %>
 <div class="posts-container">
   <h3>Post一覧</h3>
@@ -8,6 +12,7 @@
       <div class="main-box">
         <div class="left-container">
           <%= t.title %>
+          <%= t.street_address %>
           <%= image_tag t.image_url, size: "250x200" if t.image? %>
         </div>
         <div class="right-container">
@@ -16,6 +21,7 @@
           <%= link_to "削除", post_path(t.id), method: :delete %>
         </div>
       </div>
+      <%= t.user.email %>
       <p class="time"><%= t.created_at.to_s(:datetime_jp) %></p>
     </div>
   <% end %>      
@@ -36,7 +42,7 @@
         function initMap() {
 
           //初期表示位置
-          let latlng = new google.maps.LatLng(38.60, 139.5);
+          let latlng = new google.maps.LatLng(33.59, 130.40);
           //デザイン
           let styles = [
               {
@@ -48,7 +54,7 @@
               ];
 
           let map = new google.maps.Map(document.getElementById('map'), {
-              zoom: 5.5,
+              zoom: 9.5,
               styles: styles,
               center: latlng
           });
