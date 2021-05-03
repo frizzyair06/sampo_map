@@ -1,101 +1,129 @@
-<h1>sampomap</h1>
-<h3>新規spot</h3>
-
-<%= form_with(model: @post, local: true) do |f| %>
-  <div class="actions">
-    <div class="field">
-    <%= f.label :title %>
-    <%= f.text_field :title, :size => 30 %><br>
-    <%= f.label :image %>
-    <%= f.file_field :image %>
-    <br>
-    <%= f.label :詳細 %>
-    <%= f.text_field :detail, :size => "150" %><br>
-    <%= f.hidden_field :lat,:value =>"緯度", id: :lat %>
-    <%= f.hidden_field :lng,:value =>"経度", id: :lng %>
-    <input type="button" value="住所取得" onclick="getAddress();">
-    <%= f.text_field :street_address, :id =>"addressOutput",:size => "150" %>
-  <%= f.submit "spotを投稿する" %>
-  </div>
-<% end %>
+<h3>NEW SPOT</h3>
+<div class="row">
   
-<div class = "gmap_registration">
-    <h2>Map</h2>
-
-    <input id="address" type="textbox" value="GeekSalon">
-    <input type="button" value="encode" onclick="codeAddress()">
-    <br>
-
-    <p>マーカーをドラック＆ドロップで位置の調整ができます。<p>
-    <div id='map'></div>
-
-    <style>
-    #map {
-      height: 600px;
-      width: 600px;
-    }
-    </style>
-
-    <script>
-    //初期マップの設定
-    let map
-    let marker
-    function initMap(){
-      geocoder = new google.maps.Geocoder()
-      
-
-      map = new google.maps.Map(document.getElementById('map'), {
-        center:  {lat: 35.6803997, lng:139.7690174},  //東京
-        zoom: 15,
-
-      });
-    }
-
-    //検索後のマップ作成
-    let geocoder
-    let aft
-    function codeAddress(){
-      let inputAddress = document.getElementById('address').value;
-
-      geocoder.geocode( { 'address': inputAddress}, function(results, status) {
-        if (status == 'OK') {
-            //マーカーが複数できないようにする
-            if (aft == true){
-                marker.setMap(null);
-            }
-
-            //新しくマーカーを作成する
-            map.setCenter(results[0].geometry.location);
-                marker = new google.maps.Marker({
-                map: map,
-                position: results[0].geometry.location,
-                draggable: true // ドラッグ可能にする
-            });
-
-            //二度目以降か判断
-            aft = true
-
-            //検索した時に緯度経度を入力する
-            document.getElementById('lat').value = results[0].geometry.location.lat();
-            document.getElementById('lng').value = results[0].geometry.location.lng();
-
-            // マーカーのドロップ（ドラッグ終了）時のイベント
-            google.maps.event.addListener( marker, 'dragend', function(ev){
-                // イベントの引数evの、プロパティ.latLngが緯度経度
-                document.getElementById('lat').value = ev.latLng.lat();
-                document.getElementById('lng').value = ev.latLng.lng();
-            });
-        } else {
-          alert('該当する結果がありませんでした：' + status);
-        }
-      });   
-    }
-
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDjiwgPmWOBS1wgobOv5ILh-pdSKjYlMII&callback=initMap" async defer></script>
-
+  <div class="col-6">
+    <%= form_with(model: @post, local: true, class: "row g-3") do |f| %>
+      <div class="col-12">
+        <%= f.label :title, class: "form-label" %>
+        <%= f.text_field :title, class: "form-control", id: "exampleFormControlInput1" %>
+      </div>
+      <div class="col-12">
+        <p>Address</p>
+        <%= f.text_field :street_address, :id =>"addressOutput",class: "form-control" %>
+        <input type="button" value="ADDRESS ACQUISITION" class="form-label" onclick="getAddress();">
+      </div>
+      <div class="col-12">
+        <%= f.label :image, class: "form-label" %>
+        <%= f.file_field :image, class: "form-control form-control-sm" %>
+      </div>
+      <div class="col-12">
+        <%= f.label :tag_list, class: "form-label" %>
+        <%=f.text_field :tag_list, value: @post.tag_list.join(','), class: "form-control" %>
+      </div>
+      <div class="col-12">
+        <%= f.label :detail, class: "form-label" %>
+        <%= f.text_field :detail, class: "form-control", rows: 3 %>
+      </div>
+      <%= f.hidden_field :lat,:value =>"緯度", id: :lat %>
+      <%= f.hidden_field :lng,:value =>"経度", id: :lng %>
+      <div class="col-12">
+        <%= f.submit "sumbmit post", class: "btn btn-outline-info btn-m" %>
+      </div>
+    <% end %>
+      <div class="col-12">
+        <%= link_to "HOME", posts_path, class:"btn btn-outline-info btn-m" %>
+      </div>  
   </div>
-</div>  
+  <div class="col-6">
+    <div class = "gmap_registration">
+        <input id="address" type="textbox" value="GeekSalon">
+        <input type="button" value="search" onclick="codeAddress()">
+        <br>
+
+        <p>You can adjust the position of the marker by dragging and dropping.<p>
+        <div id='map'></div>
+
+        <style>
+        #map {
+          height: 600px;
+          width: 100%;
+        }
+        </style>
+
+        <script>
+        //初期マップの設定
+        let map
+        let marker
+        function initMap(){
+          geocoder = new google.maps.Geocoder()
+          
+
+          map = new google.maps.Map(document.getElementById('map'), {
+            center:  {lat: 35.6803997, lng:139.7690174},  //東京
+            zoom: 15,
+
+          });
+        }
+
+        //検索後のマップ作成
+        let geocoder
+        let aft
+        function codeAddress(){
+          let inputAddress = document.getElementById('address').value;
+
+          geocoder.geocode( { 'address': inputAddress}, function(results, status) {
+            if (status == 'OK') {
+                //マーカーが複数できないようにする
+                if (aft == true){
+                    marker.setMap(null);
+                }
+
+                //新しくマーカーを作成する
+                map.setCenter(results[0].geometry.location);
+                    marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location,
+                    draggable: true // ドラッグ可能にする
+                });
+
+                //二度目以降か判断
+                aft = true
+
+                //検索した時に緯度経度を入力する
+                document.getElementById('lat').value = results[0].geometry.location.lat();
+                document.getElementById('lng').value = results[0].geometry.location.lng();
+                document.getElementById('addressOutput').value = results[0].formatted_address;
+
+                // マーカーのドロップ（ドラッグ終了）時のイベント
+                google.maps.event.addListener( marker, 'dragend', function(ev){
+                    // イベントの引数evの、プロパティ.latLngが緯度経度
+                    document.getElementById('lat').value = ev.latLng.lat();
+                    document.getElementById('lng').value = ev.latLng.lng();
+                    // document.getElementById('addressOutput').value = ev.formatted_address;
+                  geocode2
+                });
+            } else {
+              alert('該当する結果がありませんでした：' + status);
+            }
+          }); 
+          function geocode2() {
+            var geocoder2 = new google.maps.Geocoder(); 
+            geocoder2.geocode( { 'location': Marker.position}, function(results, status) {
+              document.getElementById('addressOutput').value = results[0].formatted_address;
+
+            }); 
+            
+          }
+          
+        }
+
+        </script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDjiwgPmWOBS1wgobOv5ILh-pdSKjYlMII&callback=initMap" async defer></script>
+
+      </div>
+    </div> 
+  </div>
+</div>
 
 <div class = "latlng => adress">
   <script type="text/javascript">
@@ -147,4 +175,7 @@
   </script> 
 </div>
 
-<%= link_to "spot一覧に戻る", posts_path %>
+
+
+
+      

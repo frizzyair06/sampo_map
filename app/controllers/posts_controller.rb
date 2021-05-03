@@ -4,6 +4,7 @@ class PostsController < ApplicationController
   
   def index
     @posts = Post.all
+    @tags = Post.tag_counts_on(:tags).most_used(20)
   end
   def new
     @post = Post.new
@@ -23,6 +24,7 @@ class PostsController < ApplicationController
 
   def show
     @post = Post.find(params[:id])
+    @tags = @post.tag_counts_on(:tags)
   end
 
   def edit
@@ -46,6 +48,6 @@ class PostsController < ApplicationController
   
   private
   def post_params
-    params.require(:post).permit(:title,:detail,:image,:lat,:lng,:street_address)
+    params.require(:post).permit(:title,:detail,:image,:lat,:lng,:street_address,:tag_list)
   end
 end
